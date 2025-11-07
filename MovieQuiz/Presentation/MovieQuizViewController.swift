@@ -2,33 +2,34 @@ import UIKit
 
 final class MovieQuizViewController: UIViewController {
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        let firstQuestion = questions[currentQuestionIndex]
-                let viewModel = convert(model: firstQuestion)
-                show(quiz: viewModel)
-    }
     
-    @IBOutlet weak private var questionTitleLabel: UILabel!
+    //MARK: - Outlets
+    @IBOutlet weak private var titleLabel: UILabel!
+    @IBOutlet weak private var counterLabel: UILabel!
+    @IBOutlet weak private var posterImageView: UIImageView!
+    @IBOutlet weak private var questionTextLabel: UILabel!
     
-    @IBOutlet weak private var indexLabel: UILabel!
-    
-    @IBOutlet weak private var previewImage: UIImageView!
-    
-    @IBOutlet weak private var questionLabel: UILabel!
+    //MARK: - Properties
     private var currentQuestionIndex = 0
     private var correctAnswers = 0
     
-    
-    
+    //MARK: - Models
     struct QuizQuestion {
         let image: String
         let text: String
         let correctAnswer: Bool
     }
-    
-    
-    
+    struct QuizStepViewModel {
+        let image: UIImage
+        let question: String
+        let questionNumber: String
+    }
+    struct QuizResultsViewModel {
+        let title: String
+        let text: String
+        let buttonText: String
+    }
+    //MARK: - Data
     private let questions: [QuizQuestion] = [
         QuizQuestion(
             image: "The Godfather",
@@ -73,20 +74,32 @@ final class MovieQuizViewController: UIViewController {
         
     ]
     
-    
-    struct QuizStepViewModel {
-        let image: UIImage
-        let question: String
-        let questionNumber: String
+    //MARK: - Lifecycle
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupUI()
+        showFirstQuestion()
     }
     
-    struct QuizResultsViewModel {
-        let title: String
-        let text: String
-        let buttonText: String
+    //MARK: - Actions
+    @IBAction func yesButtonTapped(_ sender: Any) {
+        handleAnswer(true)
+    }
+    @IBAction func noButtonTapped(_ sender: Any) {
+        handleAnswer(false)
     }
     
+    //MARK: - Private Methods
+    private func setupUI() {
+        posterImageView.layer.cornerRadius = 20
+        posterImageView.layer.masksToBounds = true
+    }
     
+    private func showFirstQuestion() {
+        let firstQuestion = questions[currentQuestionIndex]
+                let viewModel = convert(model: firstQuestion)
+                show(quiz: viewModel)
+    }
     
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
         let questionStep = QuizStepViewModel(
@@ -96,23 +109,20 @@ final class MovieQuizViewController: UIViewController {
         return questionStep
     }
     
-    
     private func show(quiz step: QuizStepViewModel) {
-           previewImage.image = step.image
-           questionLabel.text = step.question
-           indexLabel.text = step.questionNumber
-           
-        
-           previewImage.layer.borderWidth = 0
-           previewImage.layer.borderColor = nil
+        posterImageView.image = step.image
+        questionTextLabel.text = step.question
+        counterLabel.text = step.questionNumber
+        posterImageView.layer.borderWidth = 0
+        posterImageView.layer.borderColor = nil
        }
     
     
     private func showAnswerResult(isCorrect: Bool) {
-        previewImage.layer.masksToBounds = true
-        previewImage.layer.borderWidth = 5
-        previewImage.layer.borderColor = isCorrect ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
-        previewImage.layer.cornerRadius = 15
+        posterImageView.layer.masksToBounds = true
+        posterImageView.layer.borderWidth = 8
+        posterImageView.layer.borderColor = isCorrect ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
+        posterImageView.layer.cornerRadius = 20
         
         if isCorrect {
             correctAnswers += 1
@@ -123,22 +133,11 @@ final class MovieQuizViewController: UIViewController {
         }
     }
     
-    
-    
-    @IBAction func yesButton(_ sender: Any) {
+    private func handleAnswer(_ givenAnswer: Bool) {
         let currentQuestion = questions[currentQuestionIndex]
-        let givenAnswer = true
-        
-        showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
+        let isCorrect = givenAnswer == currentQuestion.correctAnswer
+        showAnswerResult(isCorrect: isCorrect)
     }
-    
-    @IBAction func noButton(_ sender: Any) {
-        let currentQuestion = questions[currentQuestionIndex]
-        let givenAnswer = false
-        
-        showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
-    }
-    
     
     private func showNextQuestionOrResults() {
         if currentQuestionIndex == questions.count - 1 {
