@@ -5,10 +5,12 @@ final class MovieQuizViewController: UIViewController {
     
     //MARK: - Outlets
     @IBOutlet weak private var titleLabel: UILabel!
-    @IBOutlet weak private var counterLabel: UILabel!
-    @IBOutlet weak private var posterImageView: UIImageView!
-    @IBOutlet weak private var questionTextLabel: UILabel!
+    @IBOutlet weak var posterImageView: UIImageView!
+    @IBOutlet weak var counterLabel: UILabel!
+    @IBOutlet weak var questionTextLabel: UILabel!
     
+    @IBOutlet weak var yesButton: UIButton!
+    @IBOutlet weak var noButton: UIButton!
     //MARK: - Properties
     private var currentQuestionIndex = 0
     private var correctAnswers = 0
@@ -115,6 +117,8 @@ final class MovieQuizViewController: UIViewController {
         counterLabel.text = step.questionNumber
         posterImageView.layer.borderWidth = 0
         posterImageView.layer.borderColor = nil
+        yesButton.isEnabled = true
+        noButton.isEnabled = true
        }
     
     
@@ -137,6 +141,9 @@ final class MovieQuizViewController: UIViewController {
         let currentQuestion = questions[currentQuestionIndex]
         let isCorrect = givenAnswer == currentQuestion.correctAnswer
         showAnswerResult(isCorrect: isCorrect)
+        
+        yesButton.isEnabled = false
+        noButton.isEnabled = false
     }
     
     private func showNextQuestionOrResults() {
