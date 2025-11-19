@@ -10,16 +10,15 @@ struct GameResult {
     let correct: Int
     let total: Int
     let date: Date
-    
-    func isBetterThan(_ another: GameResult) -> Bool {
-            correct > another.correct
+    var formattedDate: String {
+            return date.dateTimeString
         }
-    
-    func formattedString() -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd.MM.yy HH:mm"
-        let dateString = dateFormatter.string(from: date)
-        
-        return "Ваш рекорд: \(correct)/\(total) (\(dateString))"
+    var formattedString: String {
+            return "\(correct)/\(total) (\(date.dateTimeString))"
+        }
+    func isBetterThan(_ another: GameResult) -> Bool {
+        correct > another.correct
     }
+    
+    
 }

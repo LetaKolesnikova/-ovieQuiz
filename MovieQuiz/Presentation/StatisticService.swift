@@ -32,7 +32,7 @@ final class StatisticService: StatisticServiceProtocol {
             let total = storage.integer(forKey: Keys.bestGameTotal)
             let date = storage.object(forKey: Keys.bestGameDate) as? Date ?? Date()
             
-            return GameResult(correct: correct, total: total, date: date)
+            return GameResult(correct:correct, total:total, date: date)
         }
         set {
             storage.set(newValue.correct, forKey: Keys.bestGameCorrect)
@@ -42,22 +42,22 @@ final class StatisticService: StatisticServiceProtocol {
     }
     
     var totalAccuracy: Double {
-           let correctAnswers = storage.integer(forKey: Keys.totalCorrectAnswers)
-            let totalQuestions = storage.integer(forKey: Keys.totalQuestionsAsked)
-            
-            guard totalQuestions > 0 else { return 0.0 }
-            return Double(correctAnswers) / Double(totalQuestions) * 100
-        }
+        let correctAnswers = storage.integer(forKey: Keys.totalCorrectAnswers)
+        let totalQuestions = storage.integer(forKey: Keys.totalQuestionsAsked)
+        
+        guard totalQuestions > 0 else { return 0.0 }
+        return Double(correctAnswers) / Double(totalQuestions) * 100
+    }
     
     private var totalCorrectAnswers: Int {
-            get { storage.integer(forKey: Keys.totalCorrectAnswers) }
-            set { storage.set(newValue, forKey: Keys.totalCorrectAnswers) }
-        }
-        
-        private var totalQuestionsAsked: Int {
-            get { storage.integer(forKey: Keys.totalQuestionsAsked) }
-            set { storage.set(newValue, forKey: Keys.totalQuestionsAsked) }
-        }
+        get { storage.integer(forKey: Keys.totalCorrectAnswers) }
+        set { storage.set(newValue, forKey: Keys.totalCorrectAnswers) }
+    }
+    
+    private var totalQuestionsAsked: Int {
+        get { storage.integer(forKey: Keys.totalQuestionsAsked) }
+        set { storage.set(newValue, forKey: Keys.totalQuestionsAsked) }
+    }
     
     func store(correct count: Int, total amount: Int) {
         gamesCount += 1
@@ -66,8 +66,8 @@ final class StatisticService: StatisticServiceProtocol {
         
         let currentGame = GameResult(correct: count, total: amount, date: Date())
         if gamesCount == 1 || currentGame.isBetterThan(bestGame) {
-                    bestGame = currentGame
-                }
+            bestGame = currentGame
+        }
     }
     
     

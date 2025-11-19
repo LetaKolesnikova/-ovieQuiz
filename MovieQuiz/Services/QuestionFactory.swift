@@ -8,11 +8,11 @@ import UIKit
 
 class QuestionFactory: QuestionFactoryProtocol {
     weak var delegate: QuestionFactoryDelegate?
-
+    
     func setup(delegate: QuestionFactoryDelegate) {
         self.delegate = delegate
     }
-
+    
     let questions: [QuizQuestion] = [
         QuizQuestion(
             image: "The Godfather",
@@ -57,15 +57,29 @@ class QuestionFactory: QuestionFactoryProtocol {
         
     ]
     
-    func requestNextQuestion() {
+    
+        private var usedQuestionIndices = Set<Int>()
         
-        guard let index = (0..<questions.count).randomElement() else {
-            delegate?.didRecieveNextQuestion(question: nil)
-            return
+        func requestNextQuestion() {
+            if usedQuestionIndices.count == questions.count {
+                delegate?.didRecieveNextQuestion(question: nil)
+                return
+            }
+            
+            var randomIndex: Int
+            repeat {
+                randomIndex = Int.random(in: 0..<questions.count)
+            } while usedQuestionIndices.contains(randomIndex)
+            
+            usedQuestionIndices.insert(randomIndex)
+            
+            let question = questions[randomIndex]
+            delegate?.didRecieveNextQuestion(question: question)
         }
-
-        let question = questions[safe: index]
-        delegate?.didRecieveNextQuestion(question: question)
-    }
+        
+        func resetGame() {
+            usedQuestionIndices.removeAll()
+        }
+    
     
 }

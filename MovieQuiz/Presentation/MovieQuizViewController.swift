@@ -13,12 +13,12 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
     
     //MARK: - Properties
     private var currentQuestionIndex = 0
-     var correctAnswers = 0
+    var correctAnswers = 0
     private let questionsAmount: Int = 10
     private var questionFactory: QuestionFactoryProtocol?
     private var currentQuestion: QuizQuestion?
     private var alertPresenter = AlertPresenter()
-    private let statisticService = StatisticService()
+    private let statisticService: StatisticServiceProtocol = StatisticService()
     
     
     //MARK: - Lifecycle
@@ -27,21 +27,21 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
         setupUI()
         setupQuestionFactory()
         questionFactory?.requestNextQuestion()
-        }
+    }
     
     // MARK: - QuestionFactoryDelegate
-
+    
     func didRecieveNextQuestion(question: QuizQuestion?) {
-            guard let question = question else {
-                return
-            }
-
-            currentQuestion = question
-            let viewModel = convert(model: question)
-            DispatchQueue.main.async { [weak self] in
-                self?.show(quiz: viewModel)
-            }
+        guard let question = question else {
+            return
         }
+        
+        currentQuestion = question
+        let viewModel = convert(model: question)
+        DispatchQueue.main.async { [weak self] in
+            self?.show(quiz: viewModel)
+        }
+    }
     
     //MARK: - Actions
     @IBAction func yesButtonTapped(_ sender: Any) {
@@ -58,15 +58,15 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
     }
     
     private func setupQuestionFactory() {
-            let questionFactory = QuestionFactory()
-            questionFactory.setup(delegate: self)
-            self.questionFactory = questionFactory
-        }
+        let questionFactory = QuestionFactory()
+        questionFactory.setup(delegate: self)
+        self.questionFactory = questionFactory
+    }
     
     private func showFirstQuestion() {
         let questionFactory = QuestionFactory()
-                questionFactory.setup(delegate: self)
-                self.questionFactory = questionFactory
+        questionFactory.setup(delegate: self)
+        self.questionFactory = questionFactory
         questionFactory.requestNextQuestion()
     }
     
@@ -87,7 +87,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
         posterImageView.layer.borderColor = nil
         yesButton.isEnabled = true
         noButton.isEnabled = true
-       }
+    }
     
     
     private func showAnswerResult(isCorrect: Bool) {
@@ -119,10 +119,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
     
     private func showNextQuestionOrResults() {
         if currentQuestionIndex == questionsAmount - 1 {
-            // Сохраняем результаты текущей игры
             statisticService.store(correct: correctAnswers, total: questionsAmount)
             
-            // Показываем результаты
             let result = QuizResultsViewModel(
                 title: "Результат",
                 text: "Ваш результат: \(correctAnswers)/\(questionsAmount)",
@@ -134,29 +132,30 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
             questionFactory?.requestNextQuestion()
         }
     }
-
+    
     func show(quiz result: QuizResultsViewModel) {
         let title = "Этот раунд окончен!"
         let message = """
-        Ваш результат: \(correctAnswers)/10
+        Ваш результат: \(correctAnswers)/\(questionsAmount)
         Количество сыгранных квизов: \(statisticService.gamesCount)
-        Рекорд: \(statisticService.bestGame.formattedString())
+        Рекорд: \(statisticService.bestGame.formattedString)
         Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%
         """
         let buttonText = "Сыграть ещё раз"
         
         let model = AlertModel(title: title, message: message, buttonText: buttonText) { [weak self] in
             guard let self = self else { return }
-
+            
             self.currentQuestionIndex = 0
             self.correctAnswers = 0
+            self.questionFactory?.resetGame()
             self.questionFactory?.requestNextQuestion()
         }
         
         alertPresenter.show(in: self, model: model)
     }
-        
-       
-}
     
+    
+}
+
 
