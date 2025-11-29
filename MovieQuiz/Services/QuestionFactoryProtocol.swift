@@ -9,6 +9,7 @@ import Foundation
 
 protocol QuestionFactoryProtocol {
     func requestNextQuestion()
-    func resetGame() 
+    func resetGame()
+    func loadData()
     
 }

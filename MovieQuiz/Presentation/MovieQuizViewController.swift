@@ -8,6 +8,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
     @IBOutlet weak var posterImageView: UIImageView!
     @IBOutlet weak var counterLabel: UILabel!
     @IBOutlet weak var questionTextLabel: UILabel!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var yesButton: UIButton!
     @IBOutlet weak var noButton: UIButton!
     
@@ -26,6 +27,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
         super.viewDidLoad()
         setupUI()
         setupQuestionFactory()
+        questionFactory?.loadData()
+        showLoadingIndicator()
         questionFactory?.requestNextQuestion()
     }
     
@@ -58,26 +61,70 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
     }
     
     private func setupQuestionFactory() {
-        let questionFactory = QuestionFactory()
+        let moviesLoader = MoviesLoader()
+        let questionFactory = QuestionFactory(
+            moviesLoader: moviesLoader,
+                delegate: self
+        )
         questionFactory.setup(delegate: self)
         self.questionFactory = questionFactory
     }
     
+    private func showLoadingIndicator() {
+        activityIndicator.isHidden = false
+        activityIndicator.startAnimating()
+        
+        view.bringSubviewToFront(activityIndicator)
+    }
+    
+    private func hideLoadingIndicator() {
+        activityIndicator.isHidden = true
+    }
+    
+    private func showNetworkError(message: String) {
+        hideLoadingIndicator()
+        
+        let model = AlertModel(title: "Ошибка",
+                               message: message,
+                               buttonText: "Попробовать еще раз") { [weak self] in
+            guard let self = self else { return }
+            
+            self.currentQuestionIndex = 0
+            self.correctAnswers = 0
+            
+            self.questionFactory?.requestNextQuestion()
+        }
+        
+        alertPresenter.show(in: self, model: model)
+    }
+    
+
+    func didFailToLoadData(with error: Error) {
+        showNetworkError(message: error.localizedDescription)
+    }
+    
+    func didLoadDataFromServer() {
+        hideLoadingIndicator()
+        questionFactory?.requestNextQuestion()
+    }
+    
     private func showFirstQuestion() {
-        let questionFactory = QuestionFactory()
+        let moviesLoader = MoviesLoader()
+        let questionFactory = QuestionFactory(
+            moviesLoader: moviesLoader,
+                delegate: self
+        )
         questionFactory.setup(delegate: self)
         self.questionFactory = questionFactory
         questionFactory.requestNextQuestion()
     }
     
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
-        
-        let questionStep = QuizStepViewModel(
-            image: UIImage(named: model.image) ?? UIImage(),
+        return QuizStepViewModel(
+            image: UIImage(data: model.image) ?? UIImage(),
             question: model.text,
             questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)")
-        return questionStep
-    }
+    } 
     
     private func show(quiz step: QuizStepViewModel) {
         posterImageView.image = step.image
