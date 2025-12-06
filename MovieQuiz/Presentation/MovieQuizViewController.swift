@@ -5,12 +5,12 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
     
     //MARK: - Outlets
     @IBOutlet weak private var titleLabel: UILabel!
-    @IBOutlet weak var posterImageView: UIImageView!
-    @IBOutlet weak var counterLabel: UILabel!
-    @IBOutlet weak var questionTextLabel: UILabel!
-    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-    @IBOutlet weak var yesButton: UIButton!
-    @IBOutlet weak var noButton: UIButton!
+    @IBOutlet weak private var posterImageView: UIImageView!
+    @IBOutlet weak private var counterLabel: UILabel!
+    @IBOutlet weak private var questionTextLabel: UILabel!
+    @IBOutlet weak private var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak private var yesButton: UIButton!
+    @IBOutlet weak private var noButton: UIButton!
     
     //MARK: - Properties
     private var currentQuestionIndex = 0
@@ -121,7 +121,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
     
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
         return QuizStepViewModel(
-            image: UIImage(data: model.image) ?? UIImage(),
+            image: UIImage(data: model.imageData) ?? UIImage(),
             question: model.text,
             questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)")
     } 

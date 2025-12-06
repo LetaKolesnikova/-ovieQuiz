@@ -103,13 +103,13 @@ class QuestionFactory: QuestionFactoryProtocol {
             let text = "Рейтинг этого фильма больше чем \(currentIndex)?"
             let correctAnswer = Int(rating) > currentIndex
             
-            let question = QuizQuestion(image: imageData,
+            let question = QuizQuestion(imageData: imageData,
                                         text: text,
                                         correctAnswer: correctAnswer)
             
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
-                self.delegate?.didRecieveNextQuestion(question: question)
+                self.delegate?.didReceiveNextQuestion(question: question)
             }
         }
     }
