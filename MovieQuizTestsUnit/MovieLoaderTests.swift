@@ -1,10 +1,8 @@
-
-
 //
-//  MoviesLoaderTests.swift
+//  MovieLoaderTests.swift
 //  MovieQuiz
 //
-//  Created by Виолетта Сиротина on 6.12.25.
+//  Created by Виолетта Сиротина on 22.12.25.
 //
 
 import XCTest
@@ -61,7 +59,7 @@ struct StubNetworkClient: NetworkRouting {
     }
 }
 
-class MoviesLoaderTests: XCTestCase {
+final class MoviesLoaderTests: XCTestCase {
     func testSuccessLoading() throws {
         let stubNetworkClient = StubNetworkClient(emulateError: false)
         let loader = MoviesLoader(networkClient: stubNetworkClient)

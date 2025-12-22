@@ -1,13 +1,13 @@
 //
-//  MovieQuizTests_.swift
-//  MovieQuizTestsы
+//  MovieQuizTestsUnit.swift
+//  MovieQuizTestsUnit
 //
-//  Created by Виолетта Сиротина on 6.12.25.
+//  Created by Виолетта Сиротина on 22.12.25.
 //
 
 import Testing
 
-struct MovieQuizTests_ {
+struct MovieQuizTestsUnit {
 
     @Test func example() async throws {
         // Write your test here and use APIs like `#expect(...)` to check expected conditions.
